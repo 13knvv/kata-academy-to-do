@@ -1,2 +1,2 @@
-# -kataAcademyToDo
+# kataAcademyToDo
 Task for kataAcademy
