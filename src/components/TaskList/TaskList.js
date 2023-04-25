@@ -1,20 +1,22 @@
 import Task from "../Task/Task";
-import './TaskList.css'
+import "./TaskList.css";
 
-const TaskList = () => {
-  return (
-    <ul class='todo-list'>
-      <li class='completed'>
-        <Task />
+const TaskList = ({ tasks }) => {
+  const tasksComponents = tasks.map((task) => {
+    return (
+      <li
+        key={task.id}
+        className={
+          (task.isCompleted ? "completed" : "") +
+          " " +
+          (task.isEditing ? "editing" : "")
+        }
+      >
+        <Task task={task} />
       </li>
-      <li class='editing'>
-        <Task />
-      </li>
-      <li>
-        <Task />
-      </li>
-    </ul>
-  );
+    );
+  });
+  return <ul className='todo-list'>{tasksComponents}</ul>;
 };
 
 export default TaskList;

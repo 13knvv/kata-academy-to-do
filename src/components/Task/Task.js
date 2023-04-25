@@ -1,17 +1,26 @@
-const Task = () => {
+import { formatDistanceToNow } from "date-fns";
+
+const Task = ({ task }) => {
   return (
     <>
-    <div class='view'>
-      <input class='toggle' type='checkbox' />
-      <label>
-        <span class='description'>Completed task</span>
-        <span class='created'>created 17 seconds ago</span>
-      </label>
-      <button class='icon icon-edit'></button>
-      <button class='icon icon-destroy'></button>
-    </div>
-    <input type="text" class="edit" value="Editing task"></input>
-  </>
+      <div className='view'>
+        <input className='toggle' type='checkbox' />
+        <label>
+          <span className='description'>{task.text}</span>
+          <span className='created'>
+            created {formatDistanceToNow(task.date)} ago
+          </span>
+        </label>
+        <button className='icon icon-edit'></button>
+        <button className='icon icon-destroy'></button>
+      </div>
+      <input
+        type='text'
+        className='edit'
+        value={task.text}
+        onChange={() => 1}
+      ></input>
+    </>
   );
 };
 
