@@ -1,7 +1,7 @@
 import Task from "../Task/Task";
 import "./TaskList.css";
 
-const TaskList = ({ tasks }) => {
+const TaskList = ({ tasks, onChangeCompleted, onDelete }) => {
   const tasksComponents = tasks.map((task) => {
     return (
       <li
@@ -12,7 +12,11 @@ const TaskList = ({ tasks }) => {
           (task.isEditing ? "editing" : "")
         }
       >
-        <Task task={task} />
+        <Task
+          task={task}
+          onChangeCompleted={onChangeCompleted}
+          onDelete={onDelete}
+        />
       </li>
     );
   });
