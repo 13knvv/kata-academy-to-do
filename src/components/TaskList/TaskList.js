@@ -1,21 +1,41 @@
 import Task from "../Task/Task";
 import "./TaskList.css";
 
-const TaskList = ({ tasks, onChangeCompleted, onDelete }) => {
-  const tasksComponents = tasks.map((task) => {
+const TaskList = ({
+  tasks,
+  toggleTaskCompleted,
+  toggleTaskEditMode,
+  changeTaskText,
+  deleteTask,
+  filter,
+}) => {
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "All") return true;
+    if (filter === "Active") {
+      return !task.isCompleted;
+    }
+    if (filter === "Completed") {
+      return task.isCompleted;
+    }
+    return true;
+  });
+
+  const tasksComponents = filteredTasks.map((task) => {
     return (
       <li
         key={task.id}
         className={
           (task.isCompleted ? "completed" : "") +
           " " +
-          (task.isEditing ? "editing" : "")
+          (task.editMode ? "editing" : "")
         }
       >
         <Task
           task={task}
-          onChangeCompleted={onChangeCompleted}
-          onDelete={onDelete}
+          toggleTaskCompleted={toggleTaskCompleted}
+          toggleTaskEditMode={toggleTaskEditMode}
+          changeTaskText={changeTaskText}
+          deleteTask={deleteTask}
         />
       </li>
     );

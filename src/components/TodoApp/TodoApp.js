@@ -4,42 +4,68 @@ import NewTaskForm from "../NewTaskForm/NewTaskForm";
 import TaskList from "../TaskList/TaskList";
 import "./TodoApp.css";
 
+let nextId = 4;
+
 class TodoApp extends React.Component {
   constructor() {
     super();
     this.state = {
+      filter: "All",
       tasks: [
         {
           id: 1,
           text: "Completed task",
           date: new Date(),
           isCompleted: true,
-          isEditing: false,
+          editMode: false,
         },
         {
           id: 2,
           text: "Editing task",
           date: new Date(),
           isCompleted: false,
-          isEditing: true,
+          editMode: false,
         },
         {
           id: 3,
           text: "Active task",
           date: new Date(1999),
           isCompleted: false,
-          isEditing: false,
+          editMode: false,
         },
       ],
     };
   }
 
-  onChangeCompleted = (id) => {
+  setFilter = (filter) => {
+    this.setState({
+      filter: filter,
+    });
+  };
+
+  addTask = (text) => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: [
+          ...tasks,
+          {
+            id: nextId++,
+            text: text,
+            date: new Date(),
+            isCompleted: false,
+            editMode: false,
+          },
+        ],
+      };
+    });
+  };
+
+  changeTaskField = (id, field, value) => {
     this.setState(({ tasks }) => {
       return {
         tasks: tasks.map((task) => {
           if (task.id === id) {
-            task.isCompleted = !task.isCompleted;
+            task[field] = value ? value : !task[field];
           }
           return task;
         }),
@@ -47,10 +73,30 @@ class TodoApp extends React.Component {
     });
   };
 
-  onDelete = (id) => {
+  changeTaskText = (id, text) => {
+    this.changeTaskField(id, "text", text);
+  };
+
+  toggleTaskCompleted = (id) => {
+    this.changeTaskField(id, "isCompleted");
+  };
+
+  toggleTaskEditMode = (id) => {
+    this.changeTaskField(id, "editMode");
+  };
+
+  deleteTask = (id) => {
     this.setState(({ tasks }) => {
       return {
         tasks: tasks.filter((task) => task.id !== id),
+      };
+    });
+  };
+
+  deleteTasksCompleted = () => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: tasks.filter((task) => !task.isCompleted),
       };
     });
   };
@@ -60,15 +106,23 @@ class TodoApp extends React.Component {
       <section className='todoapp'>
         <header className='header'>
           <h1>todos</h1>
-          <NewTaskForm />
+          <NewTaskForm addTask={this.addTask} />
         </header>
         <section className='main'>
           <TaskList
             tasks={this.state.tasks}
-            onChangeCompleted={this.onChangeCompleted}
-            onDelete={this.onDelete}
+            toggleTaskCompleted={this.toggleTaskCompleted}
+            toggleTaskEditMode={this.toggleTaskEditMode}
+            changeTaskText={this.changeTaskText}
+            deleteTask={this.deleteTask}
+            filter={this.state.filter}
           />
-          <Footer />
+          <Footer
+            setFilter={this.setFilter}
+            filter={this.state.filter}
+            deleteTasksCompleted={this.deleteTasksCompleted}
+            tasks={this.state.tasks}
+          />
         </section>
       </section>
     );
