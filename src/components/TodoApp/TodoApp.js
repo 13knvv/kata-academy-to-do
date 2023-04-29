@@ -1,8 +1,9 @@
-import React from "react";
-import Footer from "../Footer/Footer";
-import NewTaskForm from "../NewTaskForm/NewTaskForm";
-import TaskList from "../TaskList/TaskList";
-import "./TodoApp.css";
+import React from 'react';
+
+import Footer from '../Footer/Footer';
+import NewTaskForm from '../NewTaskForm/NewTaskForm';
+import TaskList from '../TaskList/TaskList';
+import './TodoApp.css';
 
 let nextId = 4;
 
@@ -10,25 +11,25 @@ class TodoApp extends React.Component {
   constructor() {
     super();
     this.state = {
-      filter: "All",
+      filter: 'All',
       tasks: [
         {
           id: 1,
-          text: "Completed task",
+          text: 'Completed task',
           date: new Date(),
           isCompleted: true,
           editMode: false,
         },
         {
           id: 2,
-          text: "Editing task",
+          text: 'Editing task',
           date: new Date(),
           isCompleted: false,
           editMode: false,
         },
         {
           id: 3,
-          text: "Active task",
+          text: 'Active task',
           date: new Date(1999),
           isCompleted: false,
           editMode: false,
@@ -39,7 +40,7 @@ class TodoApp extends React.Component {
 
   setFilter = (filter) => {
     this.setState({
-      filter: filter,
+      filter,
     });
   };
 
@@ -50,7 +51,7 @@ class TodoApp extends React.Component {
           ...tasks,
           {
             id: nextId++,
-            text: text,
+            text,
             date: new Date(),
             isCompleted: false,
             editMode: false,
@@ -65,7 +66,7 @@ class TodoApp extends React.Component {
       return {
         tasks: tasks.map((task) => {
           if (task.id === id) {
-            task[field] = value ? value : !task[field];
+            task[field] = value || !task[field];
           }
           return task;
         }),
@@ -74,15 +75,15 @@ class TodoApp extends React.Component {
   };
 
   changeTaskText = (id, text) => {
-    this.changeTaskField(id, "text", text);
+    this.changeTaskField(id, 'text', text);
   };
 
   toggleTaskCompleted = (id) => {
-    this.changeTaskField(id, "isCompleted");
+    this.changeTaskField(id, 'isCompleted');
   };
 
   toggleTaskEditMode = (id) => {
-    this.changeTaskField(id, "editMode");
+    this.changeTaskField(id, 'editMode');
   };
 
   deleteTask = (id) => {
@@ -103,12 +104,12 @@ class TodoApp extends React.Component {
 
   render() {
     return (
-      <section className='todoapp'>
-        <header className='header'>
+      <section className="todoapp">
+        <header className="header">
           <h1>todos</h1>
           <NewTaskForm addTask={this.addTask} />
         </header>
-        <section className='main'>
+        <section className="main">
           <TaskList
             tasks={this.state.tasks}
             toggleTaskCompleted={this.toggleTaskCompleted}

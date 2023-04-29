@@ -1,19 +1,17 @@
-import React from "react";
-import "./NewTaskForm.css";
+import React from 'react';
+import './NewTaskForm.css';
 
 class NewTaskForm extends React.Component {
   constructor() {
     super();
     this.state = {
-      value: "",
+      value: '',
     };
   }
 
   onChangeValue = (e) => {
-    this.setState(({ value }) => {
-      return {
-        value: e.target.value,
-      };
+    this.setState({
+      value: e.target.value,
     });
   };
 
@@ -21,7 +19,7 @@ class NewTaskForm extends React.Component {
     e.preventDefault();
     this.props.addTask(this.state.value);
     this.setState({
-      value: "",
+      value: '',
     });
   };
 
@@ -29,8 +27,8 @@ class NewTaskForm extends React.Component {
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          className='new-todo'
-          placeholder='What needs to be done?'
+          className="new-todo"
+          placeholder="What needs to be done?"
           autoFocus
           value={this.state.value}
           onChange={this.onChangeValue}

@@ -1,20 +1,13 @@
-import Task from "../Task/Task";
-import "./TaskList.css";
+import Task from '../Task/Task';
+import './TaskList.css';
 
-const TaskList = ({
-  tasks,
-  toggleTaskCompleted,
-  toggleTaskEditMode,
-  changeTaskText,
-  deleteTask,
-  filter,
-}) => {
+const TaskList = ({ tasks, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, filter }) => {
   const filteredTasks = tasks.filter((task) => {
-    if (filter === "All") return true;
-    if (filter === "Active") {
+    if (filter === 'All') return true;
+    if (filter === 'Active') {
       return !task.isCompleted;
     }
-    if (filter === "Completed") {
+    if (filter === 'Completed') {
       return task.isCompleted;
     }
     return true;
@@ -22,14 +15,7 @@ const TaskList = ({
 
   const tasksComponents = filteredTasks.map((task) => {
     return (
-      <li
-        key={task.id}
-        className={
-          (task.isCompleted ? "completed" : "") +
-          " " +
-          (task.editMode ? "editing" : "")
-        }
-      >
+      <li key={task.id} className={`${task.isCompleted ? 'completed' : ''} ${task.editMode ? 'editing' : ''}`}>
         <Task
           task={task}
           toggleTaskCompleted={toggleTaskCompleted}
@@ -40,7 +26,7 @@ const TaskList = ({
       </li>
     );
   });
-  return <ul className='todo-list'>{tasksComponents}</ul>;
+  return <ul className="todo-list">{tasksComponents}</ul>;
 };
 
 export default TaskList;
