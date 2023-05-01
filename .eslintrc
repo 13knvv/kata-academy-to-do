@@ -32,7 +32,7 @@
     "quotes": ["error", "single"],
     "semi": [1, "always"],
     "no-plusplus": "off",
-    "no-param-reassign": "off",
+   // "no-param-reassign": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": 0,
     "import/no-unresolved": [2, { "caseSensitive": false }],

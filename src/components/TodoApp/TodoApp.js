@@ -66,9 +66,12 @@ class TodoApp extends React.Component {
       return {
         tasks: tasks.map((task) => {
           if (task.id === id) {
-            task[field] = value || !task[field];
+            return {
+              ...task,
+              [field]: value || !task[field],
+            };
           }
-          return task;
+          return { ...task };
         }),
       };
     });
