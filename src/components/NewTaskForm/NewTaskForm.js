@@ -16,23 +16,21 @@ class NewTaskForm extends React.Component {
   };
 
   onSubmit = (e) => {
+    const { value } = this.state;
+    const { addTask } = this.props;
     e.preventDefault();
-    this.props.addTask(this.state.value);
+    addTask(value);
     this.setState({
       value: '',
     });
   };
 
   render() {
+    const { value } = this.state;
+
     return (
       <form onSubmit={this.onSubmit}>
-        <input
-          className="new-todo"
-          placeholder="What needs to be done?"
-          autoFocus
-          value={this.state.value}
-          onChange={this.onChangeValue}
-        />
+        <input className="new-todo" placeholder="What needs to be done?" value={value} onChange={this.onChangeValue} />
       </form>
     );
   }

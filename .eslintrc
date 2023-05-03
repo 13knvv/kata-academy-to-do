@@ -5,12 +5,8 @@
   },
   "ignorePatterns": ["node_modules", "dist", "build"],
   "extends": [
-    "airbnb/base",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:prettier/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings"
+    "airbnb",
+    "prettier"
   ],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
@@ -21,7 +17,7 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 12,
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": ["react", "prettier", "import"],
@@ -32,7 +28,6 @@
     "quotes": ["error", "single"],
     "semi": [1, "always"],
     "no-plusplus": "off",
-   // "no-param-reassign": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": 0,
     "import/no-unresolved": [2, { "caseSensitive": false }],

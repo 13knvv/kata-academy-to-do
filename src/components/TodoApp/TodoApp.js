@@ -45,36 +45,32 @@ class TodoApp extends React.Component {
   };
 
   addTask = (text) => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: [
-          ...tasks,
-          {
-            id: nextId++,
-            text,
-            date: new Date(),
-            isCompleted: false,
-            editMode: false,
-          },
-        ],
-      };
-    });
+    this.setState(({ tasks }) => ({
+      tasks: [
+        ...tasks,
+        {
+          id: nextId++,
+          text,
+          date: new Date(),
+          isCompleted: false,
+          editMode: false,
+        },
+      ],
+    }));
   };
 
   changeTaskField = (id, field, value) => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.map((task) => {
-          if (task.id === id) {
-            return {
-              ...task,
-              [field]: value || !task[field],
-            };
-          }
-          return { ...task };
-        }),
-      };
-    });
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            [field]: value || !task[field],
+          };
+        }
+        return { ...task };
+      }),
+    }));
   };
 
   changeTaskText = (id, text) => {
@@ -90,22 +86,19 @@ class TodoApp extends React.Component {
   };
 
   deleteTask = (id) => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.filter((task) => task.id !== id),
-      };
-    });
+    this.setState(({ tasks }) => ({
+      tasks: tasks.filter((task) => task.id !== id),
+    }));
   };
 
   deleteTasksCompleted = () => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.filter((task) => !task.isCompleted),
-      };
-    });
+    this.setState(({ tasks }) => ({
+      tasks: tasks.filter((task) => !task.isCompleted),
+    }));
   };
 
   render() {
+    const { tasks, filter } = this.state;
     return (
       <section className="todoapp">
         <header className="header">
@@ -114,18 +107,18 @@ class TodoApp extends React.Component {
         </header>
         <section className="main">
           <TaskList
-            tasks={this.state.tasks}
+            tasks={tasks}
             toggleTaskCompleted={this.toggleTaskCompleted}
             toggleTaskEditMode={this.toggleTaskEditMode}
             changeTaskText={this.changeTaskText}
             deleteTask={this.deleteTask}
-            filter={this.state.filter}
+            filter={filter}
           />
           <Footer
             setFilter={this.setFilter}
-            filter={this.state.filter}
+            filter={filter}
             deleteTasksCompleted={this.deleteTasksCompleted}
-            tasks={this.state.tasks}
+            tasks={tasks}
           />
         </section>
       </section>

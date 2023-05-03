@@ -1,25 +1,29 @@
 import './TasksFilter.css';
 
-const TasksFilter = ({ setFilter, filter }) => {
+function TasksFilter({ setFilter, filter }) {
   return (
     <ul className="filters">
       <li>
-        <button className={filter === 'All' ? 'selected' : ''} onClick={() => setFilter('All')}>
+        <button type="button" className={filter === 'All' ? 'selected' : ''} onClick={() => setFilter('All')}>
           All
         </button>
       </li>
       <li>
-        <button className={filter === 'Active' ? 'selected' : ''} onClick={() => setFilter('Active')}>
+        <button type="button" className={filter === 'Active' ? 'selected' : ''} onClick={() => setFilter('Active')}>
           Active
         </button>
       </li>
       <li>
-        <button className={filter === 'Completed' ? 'selected' : ''} onClick={() => setFilter('Completed')}>
+        <button
+          type="button"
+          className={filter === 'Completed' ? 'selected' : ''}
+          onClick={() => setFilter('Completed')}
+        >
           Completed
         </button>
       </li>
     </ul>
   );
-};
+}
 
 export default TasksFilter;

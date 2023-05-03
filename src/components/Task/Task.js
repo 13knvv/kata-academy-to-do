@@ -4,9 +4,10 @@ import React from 'react';
 class Task extends React.Component {
   constructor(props) {
     super(props);
+    const { task } = props;
     this.editFieldRef = React.createRef();
     this.state = {
-      editiValue: this.props.task.text,
+      editiValue: task.text,
     };
   }
 
@@ -17,42 +18,53 @@ class Task extends React.Component {
   };
 
   onBlurEditField = () => {
-    this.props.toggleTaskEditMode(this.props.task.id);
-    this.props.changeTaskText(this.props.task.id, this.state.editiValue);
+    const { task, toggleTaskEditMode, changeTaskText } = this.props;
+    const { editiValue } = this.state;
+
+    toggleTaskEditMode(task.id);
+    changeTaskText(task.id, editiValue);
   };
 
   onClickEdit = async () => {
-    await this.props.toggleTaskEditMode(this.props.task.id);
+    const { task, toggleTaskEditMode } = this.props;
+
+    await toggleTaskEditMode(task.id);
     this.editFieldRef.current.focus();
   };
 
   render() {
     const { task, toggleTaskCompleted, deleteTask } = this.props;
+    const { editiValue } = this.state;
 
     return (
       <>
         <div className="view">
           <input
+            name="task"
             className="toggle"
             type="checkbox"
             checked={task.isCompleted}
             onChange={() => toggleTaskCompleted(task.id)}
           />
-          <label onClick={() => toggleTaskCompleted(task.id)}>
+          <label htmlFor="task">
             <span className="description">{task.text}</span>
-            <span className="created">created {formatDistanceToNow(task.date)} ago</span>
+            <span className="created">
+              created
+              {formatDistanceToNow(task.date)}
+              ago
+            </span>
           </label>
-          <button className="icon icon-edit" onClick={this.onClickEdit}></button>
-          <button className="icon icon-destroy" onClick={() => deleteTask(task.id)}></button>
+          <button type="button" className="icon icon-edit" onClick={this.onClickEdit} aria-label="Edit" />
+          <button type="button" className="icon icon-destroy" onClick={() => deleteTask(task.id)} aria-label="Delete" />
         </div>
         <input
           type="text"
           className="edit"
           ref={this.editFieldRef}
-          value={this.state.editiValue}
+          value={editiValue}
           onChange={this.onChangeEditiValue}
           onBlur={this.onBlurEditField}
-        ></input>
+        />
       </>
     );
   }
