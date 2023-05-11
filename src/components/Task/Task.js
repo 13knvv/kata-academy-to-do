@@ -8,7 +8,23 @@ class Task extends React.Component {
     this.editFieldRef = React.createRef();
     this.state = {
       editiValue: task.text,
+      intervalId: null,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    const { task } = this.props;
+    const { min, sec } = task.timer;
+    const { task: prevTask } = prevProps;
+    const { min: prevMin, sec: prevSec } = prevTask.timer;
+
+    if (min !== prevMin || sec !== prevSec) {
+      if (min <= 0 && sec <= 0) this.timerPause();
+    }
+  }
+
+  componentWillUnmount() {
+    this.timerPause();
   }
 
   onChangeEditiValue = (e) => {
@@ -32,9 +48,35 @@ class Task extends React.Component {
     this.editFieldRef.current.focus();
   };
 
+  timerPlay = () => {
+    const { intervalId } = this.state;
+    const { minusTimer, task } = this.props;
+    const { min, sec } = task.timer;
+
+    if (!intervalId && !(min <= 0 && sec <= 0)) {
+      const id = setInterval(() => minusTimer(task.id), 1000);
+
+      this.setState({
+        intervalId: id,
+      });
+    }
+  };
+
+  timerPause = () => {
+    const { intervalId } = this.state;
+
+    clearInterval(intervalId);
+    this.setState({
+      intervalId: null,
+    });
+  };
+
   render() {
     const { task, toggleTaskCompleted, deleteTask } = this.props;
     const { editiValue } = this.state;
+    const timerMin = task.timer.min;
+    const timerSec = task.timer.sec < 10 ? `0${task.timer.sec}` : task.timer.sec;
+    const createdAgo = formatDistanceToNow(task.date);
 
     return (
       <>
@@ -47,10 +89,15 @@ class Task extends React.Component {
             onChange={() => toggleTaskCompleted(task.id)}
           />
           <label htmlFor="task">
-            <span className="description">{task.text}</span>
-            <span className="created">
+            <span className="title">{task.text}</span>
+            <span className="description">
+              <button className="icon icon-play" type="button" aria-label="timer play" onClick={this.timerPlay} />
+              <button className="icon icon-pause" type="button" aria-label="timer pause" onClick={this.timerPause} />
+              {timerMin} : {timerSec}
+            </span>
+            <span className="description">
               created
-              {formatDistanceToNow(task.date)}
+              {` ${createdAgo} `}
               ago
             </span>
           </label>

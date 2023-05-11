@@ -15,7 +15,11 @@ class TodoApp extends React.Component {
       tasks: [
         {
           id: 1,
-          text: 'Completed task',
+          text: 'Completed',
+          timer: {
+            min: 7,
+            sec: 5,
+          },
           date: new Date(),
           isCompleted: true,
           editMode: false,
@@ -23,6 +27,10 @@ class TodoApp extends React.Component {
         {
           id: 2,
           text: 'Editing task',
+          timer: {
+            min: 1,
+            sec: 0,
+          },
           date: new Date(),
           isCompleted: false,
           editMode: false,
@@ -30,6 +38,10 @@ class TodoApp extends React.Component {
         {
           id: 3,
           text: 'Active task',
+          timer: {
+            min: 0,
+            sec: 5,
+          },
           date: new Date(1999),
           isCompleted: false,
           editMode: false,
@@ -44,13 +56,14 @@ class TodoApp extends React.Component {
     });
   };
 
-  addTask = (text) => {
+  addTask = (text, timer) => {
     this.setState(({ tasks }) => ({
       tasks: [
         ...tasks,
         {
           id: nextId++,
           text,
+          timer,
           date: new Date(),
           isCompleted: false,
           editMode: false,
@@ -66,6 +79,25 @@ class TodoApp extends React.Component {
           return {
             ...task,
             [field]: value || !task[field],
+          };
+        }
+        return { ...task };
+      }),
+    }));
+  };
+
+  minusTimer = (id) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id) {
+          const { min, sec } = task.timer;
+
+          return {
+            ...task,
+            timer: {
+              min: sec ? min : min - 1,
+              sec: sec ? sec - 1 : 59,
+            },
           };
         }
         return { ...task };
@@ -113,6 +145,7 @@ class TodoApp extends React.Component {
             changeTaskText={this.changeTaskText}
             deleteTask={this.deleteTask}
             filter={filter}
+            minusTimer={this.minusTimer}
           />
           <Footer
             setFilter={this.setFilter}

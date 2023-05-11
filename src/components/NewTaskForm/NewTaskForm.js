@@ -5,32 +5,69 @@ class NewTaskForm extends React.Component {
   constructor() {
     super();
     this.state = {
-      value: '',
+      valueTodo: '',
+      min: '',
+      sec: '',
     };
   }
 
   onChangeValue = (e) => {
     this.setState({
-      value: e.target.value,
+      valueTodo: e.target.value,
+    });
+  };
+
+  onChangeMin = (e) => {
+    this.setState({
+      min: e.target.value,
+    });
+  };
+
+  onChangeSec = (e) => {
+    this.setState({
+      sec: e.target.value,
     });
   };
 
   onSubmit = (e) => {
-    const { value } = this.state;
+    const { valueTodo, min, sec } = this.state;
     const { addTask } = this.props;
     e.preventDefault();
-    addTask(value);
+    addTask(valueTodo, { min: +min, sec: +sec });
     this.setState({
-      value: '',
+      valueTodo: '',
+      min: '',
+      sec: '',
     });
   };
 
   render() {
-    const { value } = this.state;
+    const { valueTodo, min, sec } = this.state;
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input className="new-todo" placeholder="What needs to be done?" value={value} onChange={this.onChangeValue} />
+      <form onSubmit={this.onSubmit} className="new-todo-form">
+        <input className="new-todo" placeholder="Task" required value={valueTodo} onChange={this.onChangeValue} />
+        <input
+          className="new-todo-form__timer"
+          type="number"
+          required
+          min={0}
+          placeholder="Min"
+          value={min}
+          onChange={this.onChangeMin}
+        />
+        <input
+          className="new-todo-form__timer"
+          type="number"
+          required
+          min={0}
+          placeholder="Sec"
+          value={sec}
+          onChange={this.onChangeSec}
+        />
+        <button type="submit" hidden>
+          Add new task
+        </button>
       </form>
     );
   }

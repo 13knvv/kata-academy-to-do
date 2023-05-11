@@ -1,7 +1,7 @@
 import Task from '../Task/Task';
 import './TaskList.css';
 
-function TaskList({ tasks, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, filter }) {
+function TaskList({ tasks, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, filter, minusTimer }) {
   const filteredTasks = tasks.filter((task) => {
     if (filter === 'All') return true;
     if (filter === 'Active') {
@@ -21,6 +21,7 @@ function TaskList({ tasks, toggleTaskCompleted, toggleTaskEditMode, changeTaskTe
         toggleTaskEditMode={toggleTaskEditMode}
         changeTaskText={changeTaskText}
         deleteTask={deleteTask}
+        minusTimer={minusTimer}
       />
     </li>
   ));
