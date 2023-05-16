@@ -8,7 +8,6 @@ class Task extends React.Component {
     this.editFieldRef = React.createRef();
     this.state = {
       editiValue: task.text,
-      intervalId: null,
     };
   }
 
@@ -23,52 +22,57 @@ class Task extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    this.timerPause();
-  }
-
   onChangeEditiValue = (e) => {
     this.setState({
       editiValue: e.target.value,
     });
   };
 
-  onBlurEditField = () => {
-    const { task, toggleTaskEditMode, changeTaskText } = this.props;
-    const { editiValue } = this.state;
+  breakEditTask = () => {
+    const { task, toggleTaskEditMode } = this.props;
 
-    toggleTaskEditMode(task.id);
-    changeTaskText(task.id, editiValue);
+    toggleTaskEditMode(task.id, false);
+    this.setState({
+      editiValue: task.text,
+    });
+  };
+
+  onKey = (e) => {
+    if (e.keyCode === 13) {
+      const { task, changeTaskText, toggleTaskEditMode } = this.props;
+      const { editiValue } = this.state;
+
+      changeTaskText(task.id, editiValue);
+      toggleTaskEditMode(task.id, false);
+    }
+
+    if (e.keyCode === 27) {
+      this.breakEditTask();
+    }
   };
 
   onClickEdit = async () => {
     const { task, toggleTaskEditMode } = this.props;
 
-    await toggleTaskEditMode(task.id);
+    await toggleTaskEditMode(task.id, true);
     this.editFieldRef.current.focus();
   };
 
   timerPlay = () => {
-    const { intervalId } = this.state;
-    const { minusTimer, task } = this.props;
-    const { min, sec } = task.timer;
+    const { minusTimer, task, setIntervalId } = this.props;
+    const { min, sec, intervalId } = task.timer;
 
     if (!intervalId && !(min <= 0 && sec <= 0)) {
       const id = setInterval(() => minusTimer(task.id), 1000);
-
-      this.setState({
-        intervalId: id,
-      });
+      setIntervalId(task.id, id);
     }
   };
 
   timerPause = () => {
-    const { intervalId } = this.state;
+    const { task, setIntervalId } = this.props;
 
-    clearInterval(intervalId);
-    this.setState({
-      intervalId: null,
-    });
+    clearInterval(task.timer.intervalId);
+    setIntervalId(task.id, null);
   };
 
   render() {
@@ -86,7 +90,7 @@ class Task extends React.Component {
             className="toggle"
             type="checkbox"
             checked={task.isCompleted}
-            onChange={() => toggleTaskCompleted(task.id)}
+            onChange={() => toggleTaskCompleted(task.id, !task.isCompleted)}
           />
           <label htmlFor="task">
             <span className="title">{task.text}</span>
@@ -110,7 +114,8 @@ class Task extends React.Component {
           ref={this.editFieldRef}
           value={editiValue}
           onChange={this.onChangeEditiValue}
-          onBlur={this.onBlurEditField}
+          onBlur={this.breakEditTask}
+          onKeyDown={this.onKey}
         />
       </>
     );

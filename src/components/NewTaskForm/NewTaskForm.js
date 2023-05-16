@@ -33,7 +33,7 @@ class NewTaskForm extends React.Component {
     const { valueTodo, min, sec } = this.state;
     const { addTask } = this.props;
     e.preventDefault();
-    addTask(valueTodo, { min: +min, sec: +sec });
+    addTask(valueTodo, { min: +min, sec: +sec, intervalId: null });
     this.setState({
       valueTodo: '',
       min: '',
@@ -52,6 +52,7 @@ class NewTaskForm extends React.Component {
           type="number"
           required
           min={0}
+          max={59}
           placeholder="Min"
           value={min}
           onChange={this.onChangeMin}
@@ -61,6 +62,7 @@ class NewTaskForm extends React.Component {
           type="number"
           required
           min={0}
+          max={59}
           placeholder="Sec"
           value={sec}
           onChange={this.onChangeSec}

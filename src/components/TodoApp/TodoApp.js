@@ -19,6 +19,7 @@ class TodoApp extends React.Component {
           timer: {
             min: 7,
             sec: 5,
+            intervalId: null,
           },
           date: new Date(),
           isCompleted: true,
@@ -30,6 +31,7 @@ class TodoApp extends React.Component {
           timer: {
             min: 1,
             sec: 0,
+            intervalId: null,
           },
           date: new Date(),
           isCompleted: false,
@@ -41,6 +43,7 @@ class TodoApp extends React.Component {
           timer: {
             min: 0,
             sec: 5,
+            intervalId: null,
           },
           date: new Date(1999),
           isCompleted: false,
@@ -78,7 +81,7 @@ class TodoApp extends React.Component {
         if (task.id === id) {
           return {
             ...task,
-            [field]: value || !task[field],
+            [field]: value,
           };
         }
         return { ...task };
@@ -90,13 +93,37 @@ class TodoApp extends React.Component {
     this.setState(({ tasks }) => ({
       tasks: tasks.map((task) => {
         if (task.id === id) {
-          const { min, sec } = task.timer;
+          const { min, sec, intervalId } = task.timer;
+
+          if (min === 0 && sec === 0) {
+            clearInterval(intervalId);
+            return { ...task, timer: { ...task.timer, intervalId: null } };
+          }
 
           return {
             ...task,
             timer: {
+              ...task.timer,
               min: sec ? min : min - 1,
               sec: sec ? sec - 1 : 59,
+            },
+          };
+        }
+
+        return { ...task };
+      }),
+    }));
+  };
+
+  setIntervalId = (idTask, intervalId) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === idTask) {
+          return {
+            ...task,
+            timer: {
+              ...task.timer,
+              intervalId,
             },
           };
         }
@@ -109,12 +136,12 @@ class TodoApp extends React.Component {
     this.changeTaskField(id, 'text', text);
   };
 
-  toggleTaskCompleted = (id) => {
-    this.changeTaskField(id, 'isCompleted');
+  toggleTaskCompleted = (id, value) => {
+    this.changeTaskField(id, 'isCompleted', value);
   };
 
-  toggleTaskEditMode = (id) => {
-    this.changeTaskField(id, 'editMode');
+  toggleTaskEditMode = (id, value) => {
+    this.changeTaskField(id, 'editMode', value);
   };
 
   deleteTask = (id) => {
@@ -146,6 +173,7 @@ class TodoApp extends React.Component {
             deleteTask={this.deleteTask}
             filter={filter}
             minusTimer={this.minusTimer}
+            setIntervalId={this.setIntervalId}
           />
           <Footer
             setFilter={this.setFilter}
