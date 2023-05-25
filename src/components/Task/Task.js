@@ -4,13 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 function Task(props) {
   const { task, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, minusTimer } = props;
 
-  const {
-    id,
-    text,
-    timer: { min, sec },
-    date,
-    isCompleted,
-  } = task;
+  const { id, text, timer, date, isCompleted } = task;
 
   const [editiValue, setEditiValue] = useState();
   const editFieldRef = useRef();
@@ -53,15 +47,15 @@ function Task(props) {
   };
 
   const timerPlay = () => {
-    if (!intervalIdRef.current && !(min <= 0 && sec <= 0)) {
+    if (!intervalIdRef.current && timer >= 0) {
       const newIntervalId = setInterval(() => minusTimer(id), 1000);
       intervalIdRef.current = newIntervalId;
     }
   };
 
   useEffect(() => {
-    if (min <= 0 && sec <= 0) timerPause();
-  }, [min, sec]);
+    if (timer <= 0) timerPause();
+  }, [timer]);
 
   const breakEditTask = () => {
     toggleTaskEditMode(id, false);
@@ -84,7 +78,9 @@ function Task(props) {
     editFieldRef.current.focus();
   };
 
-  const timerSec = sec < 10 ? `0${sec}` : sec;
+  const min = Math.floor(timer / 60);
+  const sec = timer % 60 < 10 ? `0${timer % 60}` : timer % 60;
+
   const createdAgo = formatDistanceToNow(date);
 
   return (
@@ -102,7 +98,7 @@ function Task(props) {
           <span className="description">
             <button className="icon icon-play" type="button" aria-label="timer play" onClick={timerPlay} />
             <button className="icon icon-pause" type="button" aria-label="timer pause" onClick={timerPause} />
-            {min} : {timerSec}
+            {min} : {sec}
           </span>
           <span className="description">
             created

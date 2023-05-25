@@ -8,7 +8,8 @@ function NewTaskForm({ addTask }) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    addTask(valueTodo, { min: +min, sec: +sec, intervalId: null });
+    const timer = +min * 60 + +sec;
+    addTask(valueTodo, timer);
     setValueTodo('');
     setMin('');
     setSec('');

@@ -10,33 +10,24 @@ const tasksInitial = [
   {
     id: 1,
     text: 'Completed',
-    timer: {
-      min: 7,
-      sec: 5,
-    },
-    date: new Date(),
+    timer: 60,
+    date: new Date(2010, 8, 10),
     isCompleted: true,
     editMode: false,
   },
   {
     id: 2,
     text: 'Editing task',
-    timer: {
-      min: 1,
-      sec: 0,
-    },
-    date: new Date(),
+    timer: 125,
+    date: new Date(2014, 1, 23),
     isCompleted: false,
     editMode: false,
   },
   {
     id: 3,
     text: 'Active task',
-    timer: {
-      min: 0,
-      sec: 5,
-    },
-    date: new Date(1999),
+    timer: 11,
+    date: new Date(2022, 1, 21),
     isCompleted: false,
     editMode: false,
   },
@@ -85,20 +76,13 @@ function TodoApp() {
     setTasks((prevTasks) =>
       prevTasks.map((task) => {
         if (task.id === id) {
-          const { min, sec, intervalId } = task.timer;
-
-          if (min === 0 && sec === 0) {
-            clearInterval(intervalId);
-            return { ...task, timer: { ...task.timer, intervalId: null } };
+          if (task.timer === 0) {
+            return { ...task, timer: 0 };
           }
 
           return {
             ...task,
-            timer: {
-              ...task.timer,
-              min: sec ? min : min - 1,
-              sec: sec ? sec - 1 : 59,
-            },
+            timer: task.timer - 1,
           };
         }
 
