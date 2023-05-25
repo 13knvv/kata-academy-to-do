@@ -2,29 +2,60 @@ import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 
 function Task(props) {
-  const { task, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, minusTimer, setIntervalId } =
-    props;
+  const { task, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, minusTimer } = props;
 
   const {
     id,
     text,
-    timer: { min, sec, intervalId },
+    timer: { min, sec },
     date,
     isCompleted,
   } = task;
 
   const [editiValue, setEditiValue] = useState();
   const editFieldRef = useRef();
+  const intervalIdRef = useRef();
+
+  useEffect(() => {
+    /// в очередь после window.addEventListener('beforeunload', clearLS) in TodoApp.js
+    setTimeout(() => {
+      // значение сохраненно в LS если unmount
+      const intervalIdsLS = JSON.parse(localStorage.getItem('intervalIds'));
+      if (intervalIdsLS) {
+        intervalIdRef.current = intervalIdsLS[id] || null;
+      }
+    });
+
+    return () => {
+      // сохраняем в LS intervalId на случай unmount.
+      if (intervalIdRef.current) {
+        const newIntervalIds = {
+          ...JSON.parse(localStorage.getItem('intervalIds')),
+          [id]: intervalIdRef.current,
+        };
+        localStorage.setItem('intervalIds', JSON.stringify(newIntervalIds));
+      }
+    };
+  }, []);
 
   const timerPause = () => {
-    clearInterval(intervalId);
-    setIntervalId(id, null);
+    clearInterval(intervalIdRef.current);
+    intervalIdRef.current = null;
+
+    // удаление intervalId так же и из LS
+    const intervalIdsLS = JSON.parse(localStorage.getItem('intervalIds'));
+    if (intervalIdsLS) {
+      const intervalIdsArr = Object.entries(intervalIdsLS);
+      const newIntervalIds = intervalIdsArr.filter((item) => item[0] !== `${id}`);
+      const newIntervalIdsObj = Object.fromEntries(newIntervalIds);
+      localStorage.setItem('intervalIds', JSON.stringify(newIntervalIdsObj));
+    }
   };
 
   const timerPlay = () => {
-    if (!intervalId && !(min <= 0 && sec <= 0)) {
+    if (!intervalIdRef.current && !(min <= 0 && sec <= 0)) {
       const newIntervalId = setInterval(() => minusTimer(id), 1000);
-      setIntervalId(id, newIntervalId);
+      intervalIdRef.current = newIntervalId;
     }
   };
 

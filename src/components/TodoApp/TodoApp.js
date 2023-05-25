@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Footer from '../Footer/Footer';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
@@ -13,7 +13,6 @@ const tasksInitial = [
     timer: {
       min: 7,
       sec: 5,
-      intervalId: null,
     },
     date: new Date(),
     isCompleted: true,
@@ -25,7 +24,6 @@ const tasksInitial = [
     timer: {
       min: 1,
       sec: 0,
-      intervalId: null,
     },
     date: new Date(),
     isCompleted: false,
@@ -37,7 +35,6 @@ const tasksInitial = [
     timer: {
       min: 0,
       sec: 5,
-      intervalId: null,
     },
     date: new Date(1999),
     isCompleted: false,
@@ -48,6 +45,13 @@ const tasksInitial = [
 function TodoApp() {
   const [filter, setFilter] = useState('All');
   const [tasks, setTasks] = useState(tasksInitial);
+
+  useEffect(() => {
+    // удаление intervalIds из LS  при перезагрузки страницы
+    const clearLS = localStorage.removeItem('intervalIds');
+    window.addEventListener('beforeunload', clearLS);
+    return window.removeEventListener('beforeunload', clearLS);
+  }, []);
 
   const addTask = (text, timer) => {
     setTasks((prevTasks) => [
@@ -103,23 +107,6 @@ function TodoApp() {
     );
   };
 
-  const setIntervalId = (idTask, intervalId) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id === idTask) {
-          return {
-            ...task,
-            timer: {
-              ...task.timer,
-              intervalId,
-            },
-          };
-        }
-        return { ...task };
-      })
-    );
-  };
-
   const changeTaskText = (id, text) => {
     changeTaskField(id, 'text', text);
   };
@@ -155,7 +142,6 @@ function TodoApp() {
           deleteTask={deleteTask}
           filter={filter}
           minusTimer={minusTimer}
-          setIntervalId={setIntervalId}
         />
         <Footer setFilter={setFilter} filter={filter} deleteTasksCompleted={deleteTasksCompleted} tasks={tasks} />
       </section>
