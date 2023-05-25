@@ -1,125 +1,98 @@
 import { formatDistanceToNow } from 'date-fns';
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-class Task extends React.Component {
-  constructor(props) {
-    super(props);
-    const { task } = props;
-    this.editFieldRef = React.createRef();
-    this.state = {
-      editiValue: task.text,
-    };
-  }
+function Task(props) {
+  const { task, toggleTaskCompleted, toggleTaskEditMode, changeTaskText, deleteTask, minusTimer, setIntervalId } =
+    props;
 
-  componentDidUpdate(prevProps) {
-    const { task } = this.props;
-    const { min, sec } = task.timer;
-    const { task: prevTask } = prevProps;
-    const { min: prevMin, sec: prevSec } = prevTask.timer;
+  const {
+    id,
+    text,
+    timer: { min, sec, intervalId },
+    date,
+    isCompleted,
+  } = task;
 
-    if (min !== prevMin || sec !== prevSec) {
-      if (min <= 0 && sec <= 0) this.timerPause();
+  const [editiValue, setEditiValue] = useState();
+  const editFieldRef = useRef();
+
+  const timerPause = () => {
+    clearInterval(intervalId);
+    setIntervalId(id, null);
+  };
+
+  const timerPlay = () => {
+    if (!intervalId && !(min <= 0 && sec <= 0)) {
+      const newIntervalId = setInterval(() => minusTimer(id), 1000);
+      setIntervalId(id, newIntervalId);
     }
-  }
-
-  onChangeEditiValue = (e) => {
-    this.setState({
-      editiValue: e.target.value,
-    });
   };
 
-  breakEditTask = () => {
-    const { task, toggleTaskEditMode } = this.props;
+  useEffect(() => {
+    if (min <= 0 && sec <= 0) timerPause();
+  }, [min, sec]);
 
-    toggleTaskEditMode(task.id, false);
-    this.setState({
-      editiValue: task.text,
-    });
+  const breakEditTask = () => {
+    toggleTaskEditMode(id, false);
+    setEditiValue(text);
   };
 
-  onKey = (e) => {
+  const onKey = (e) => {
     if (e.keyCode === 13) {
-      const { task, changeTaskText, toggleTaskEditMode } = this.props;
-      const { editiValue } = this.state;
-
-      changeTaskText(task.id, editiValue);
-      toggleTaskEditMode(task.id, false);
+      changeTaskText(id, editiValue);
+      toggleTaskEditMode(id, false);
     }
 
     if (e.keyCode === 27) {
-      this.breakEditTask();
+      breakEditTask();
     }
   };
 
-  onClickEdit = async () => {
-    const { task, toggleTaskEditMode } = this.props;
-
-    await toggleTaskEditMode(task.id, true);
-    this.editFieldRef.current.focus();
+  const onClickEdit = async () => {
+    await toggleTaskEditMode(id, true);
+    editFieldRef.current.focus();
   };
 
-  timerPlay = () => {
-    const { minusTimer, task, setIntervalId } = this.props;
-    const { min, sec, intervalId } = task.timer;
+  const timerSec = sec < 10 ? `0${sec}` : sec;
+  const createdAgo = formatDistanceToNow(date);
 
-    if (!intervalId && !(min <= 0 && sec <= 0)) {
-      const id = setInterval(() => minusTimer(task.id), 1000);
-      setIntervalId(task.id, id);
-    }
-  };
-
-  timerPause = () => {
-    const { task, setIntervalId } = this.props;
-
-    clearInterval(task.timer.intervalId);
-    setIntervalId(task.id, null);
-  };
-
-  render() {
-    const { task, toggleTaskCompleted, deleteTask } = this.props;
-    const { editiValue } = this.state;
-    const timerMin = task.timer.min;
-    const timerSec = task.timer.sec < 10 ? `0${task.timer.sec}` : task.timer.sec;
-    const createdAgo = formatDistanceToNow(task.date);
-
-    return (
-      <>
-        <div className="view">
-          <input
-            name="task"
-            className="toggle"
-            type="checkbox"
-            checked={task.isCompleted}
-            onChange={() => toggleTaskCompleted(task.id, !task.isCompleted)}
-          />
-          <label htmlFor="task">
-            <span className="title">{task.text}</span>
-            <span className="description">
-              <button className="icon icon-play" type="button" aria-label="timer play" onClick={this.timerPlay} />
-              <button className="icon icon-pause" type="button" aria-label="timer pause" onClick={this.timerPause} />
-              {timerMin} : {timerSec}
-            </span>
-            <span className="description">
-              created
-              {` ${createdAgo} `}
-              ago
-            </span>
-          </label>
-          <button type="button" className="icon icon-edit" onClick={this.onClickEdit} aria-label="Edit" />
-          <button type="button" className="icon icon-destroy" onClick={() => deleteTask(task.id)} aria-label="Delete" />
-        </div>
+  return (
+    <>
+      <div className="view">
         <input
-          type="text"
-          className="edit"
-          ref={this.editFieldRef}
-          value={editiValue}
-          onChange={this.onChangeEditiValue}
-          onBlur={this.breakEditTask}
-          onKeyDown={this.onKey}
+          name="task"
+          className="toggle"
+          type="checkbox"
+          checked={isCompleted}
+          onChange={() => toggleTaskCompleted(id, !isCompleted)}
         />
-      </>
-    );
-  }
+        <label htmlFor="task">
+          <span className="title">{text}</span>
+          <span className="description">
+            <button className="icon icon-play" type="button" aria-label="timer play" onClick={timerPlay} />
+            <button className="icon icon-pause" type="button" aria-label="timer pause" onClick={timerPause} />
+            {min} : {timerSec}
+          </span>
+          <span className="description">
+            created
+            {` ${createdAgo} `}
+            ago
+          </span>
+        </label>
+        <button type="button" className="icon icon-edit" onClick={onClickEdit} aria-label="Edit" />
+        <button type="button" className="icon icon-destroy" onClick={() => deleteTask(id)} aria-label="Delete" />
+      </div>
+      <input
+        type="text"
+        className="edit"
+        ref={editFieldRef}
+        value={editiValue}
+        onChange={(e) => setEditiValue(e.target.value)}
+        onBlur={breakEditTask}
+        onKeyDown={onKey}
+      />
+    </>
+  );
 }
 
 export default Task;
