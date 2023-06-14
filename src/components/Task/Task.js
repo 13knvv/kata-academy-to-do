@@ -6,7 +6,7 @@ function Task(props) {
 
   const { id, text, timer, date, isCompleted } = task;
 
-  const [editiValue, setEditiValue] = useState();
+  const [editiValue, setEditiValue] = useState(text);
   const editFieldRef = useRef();
   const intervalIdRef = useRef();
 

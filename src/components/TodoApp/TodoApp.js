@@ -41,7 +41,9 @@ function TodoApp() {
     // удаление intervalIds из LS  при перезагрузки страницы
     const clearLS = localStorage.removeItem('intervalIds');
     window.addEventListener('beforeunload', clearLS);
-    return window.removeEventListener('beforeunload', clearLS);
+    return () => {
+      window.removeEventListener('beforeunload', clearLS);
+    };
   }, []);
 
   const addTask = (text, timer) => {
